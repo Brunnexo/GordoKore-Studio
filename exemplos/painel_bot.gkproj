@@ -1,0 +1,42 @@
+{
+  "Name": "painel_bot",
+  "Windows": [
+    {
+      "Key": "painel_bot",
+      "Title": { "Pt": "Painel do bot", "Es": "Panel del bot", "En": "Bot panel" },
+      "Width": 260,
+      "Height": 210,
+      "MenuIcon": "유저인터페이스\\item\\빨간포션.bmp",
+      "MenuLabel": { "Pt": "Bot", "Es": "", "En": "" },
+      "Widgets": [
+        { "Type": "Sprite", "Id": 1, "Name": "poring", "X": 10, "Y": 24, "Width": 50, "Height": 50, "Sprite": "poring" },
+        { "Type": "Label", "Id": 2, "Name": "estado", "X": 70, "Y": 26, "Bold": true,
+          "Text": { "Pt": "Estado: parado", "Es": "Estado: detenido", "En": "State: idle" } },
+        { "Type": "Button", "Id": 3, "Name": "iaAuto", "X": 70, "Y": 48, "Width": 80,
+          "Text": { "Pt": "IA automática", "Es": "IA automática", "En": "Auto AI" },
+          "Action": "Command", "ActionValue": "ai auto" },
+        { "Type": "Button", "Id": 4, "Name": "iaManual", "X": 156, "Y": 48, "Width": 80,
+          "Text": { "Pt": "IA manual", "Es": "IA manual", "En": "Manual AI" },
+          "Action": "Command", "ActionValue": "ai manual" },
+        { "Type": "Label", "Id": 5, "Name": "autoSentarTexto", "X": 70, "Y": 76,
+          "Text": { "Pt": "Sentar quando parado", "Es": "Sentarse si está quieto", "En": "Sit when idle" } },
+        { "Type": "CheckBox", "Id": 6, "Name": "autoSentar", "X": 216, "Y": 75, "Action": "Lua", "ActionValue": "auto_sentar" },
+        { "Type": "Rect", "Id": 7, "Name": "linha", "X": 10, "Y": 98, "Width": 240, "Height": 1, "Color": 10265524 },
+        { "Type": "Edit", "Id": 8, "Name": "comando", "X": 10, "Y": 106, "Width": 176, "Height": 18, "MaxChars": 64,
+          "Text": { "Pt": "Comando do OpenKore", "Es": "Comando de OpenKore", "En": "OpenKore command" } },
+        { "Type": "Button", "Id": 9, "Name": "enviar", "X": 192, "Y": 105, "Width": 58,
+          "Text": { "Pt": "Enviar", "Es": "Enviar", "En": "Send" },
+          "Action": "Lua", "ActionValue": "enviar" },
+        { "Type": "ListBox", "Id": 10, "Name": "atalhos", "X": 10, "Y": 130, "Width": 240, "Height": 48,
+          "Action": "Lua", "ActionValue": "usar_atalho" },
+        { "Type": "Button", "Id": 11, "Name": "sentar", "X": 10, "Y": 184, "Width": 0,
+          "Text": { "Pt": "Sentar / levantar", "Es": "Sentarse / levantarse", "En": "Sit / stand" },
+          "Action": "Cpp" },
+        { "Type": "Button", "Id": 12, "Name": "carregar", "X": 190, "Y": 184, "Width": 60,
+          "Text": { "Pt": "Atalhos", "Es": "Atajos", "En": "Shortcuts" },
+          "Action": "Lua", "ActionValue": "carregar_atalhos" }
+      ]
+    }
+  ],
+  "Lua": "-- Script do painel_bot. Funcao ligada a widget recebe (id, evento, valor).\n-- Ids: os do estudio (module.gen.h). Sem os/io: so base, string, table, math, utf8.\nlocal ESTADO, COMANDO, LISTA = 2, 8, 10\n\n-- Atalhos da lista (duplo clique manda o comando). Edite a vontade.\nlocal atalhos = {\n  { 'Ir para Prontera', 'move prontera' },\n  { 'Guardar itens', 'autostorage' },\n  { 'Vender itens', 'autosell' },\n  { 'Comprar itens', 'autobuy' },\n  { 'Onde estou?', 'where' },\n  { 'Status', 's' },\n}\n\n-- Comandos que pedem segundo clique em Enviar\nlocal perigosos = { quit = true, relog = true, respawn = true }\nlocal pendente = nil\n\nlocal function estado(pt, es, en)\n  gk.set(ESTADO, gk.tr(pt, es, en))\nend\n\n-- Botao Atalhos: enche a lista e some. Janela reaberta recria botao e lista vazia,\n-- entao lista e tabela nunca ficam fora de ordem.\nfunction carregar_atalhos(id)\n  for _, atalho in ipairs(atalhos) do\n    gk.list_add(LISTA, atalho[1])\n  end\n  gk.visible(id, false)\nend\n\nfunction usar_atalho(id, evento, indice)\n  local atalho = atalhos[indice + 1]\n  if not atalho then return end\n  gk.command(atalho[2])\n  estado('Atalho: ' .. atalho[1], 'Atajo: ' .. atalho[1], 'Shortcut: ' .. atalho[1])\nend\n\nfunction enviar()\n  local cmd = gk.get(COMANDO):match('^%s*(.-)%s*$')\n  if cmd == '' then\n    estado('Digite um comando', 'Escribe un comando', 'Type a command')\n    return\n  end\n  if perigosos[cmd:match('^%S+'):lower()] and pendente ~= cmd then\n    pendente = cmd\n    estado('Clique de novo: ' .. cmd, 'Clic otra vez: ' .. cmd, 'Click again: ' .. cmd)\n    return\n  end\n  pendente = nil\n  gk.command(cmd)\n  gk.set(COMANDO, '')\n  estado('Enviado: ' .. cmd, 'Enviado: ' .. cmd, 'Sent: ' .. cmd)\nend\n\nfunction auto_sentar(id, evento, ligado)\n  gk.command('conf sitAuto_idle ' .. ligado)\n  if ligado == 1 then\n    estado('Senta quando parado', 'Se sienta si está quieto', 'Sits when idle')\n  else\n    estado('Não senta sozinho', 'No se sienta solo', 'Does not sit alone')\n  end\nend\n\ngk.log('script carregado, ' .. #atalhos .. ' atalhos')\n"
+}

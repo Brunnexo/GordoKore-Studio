@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>GordoKore.Studio</RootNamespace>
+    <!-- A release do GitHub troca pela versao da tag (vX.Y.Z) -->
+    <Version>0.1.0</Version>
+    <Product>GordoKore Studio</Product>
+    <Copyright>Copyright (c) 2026 Bruno Costa. Licença MIT.</Copyright>
+    <!-- gdk.png convertido (16 a 256 px, quadros PNG) -->
+    <ApplicationIcon>logo.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- O gerador copia o header do SDK para cada modulo. Copia do Kore-Bridge/sdk/include: atualizar junto -->
+    <EmbeddedResource Include="sdk\gordokore_sdk.h" LogicalName="gordokore_sdk.h" />
+    <EmbeddedResource Include="logo.ico" LogicalName="logo.ico" />
+  </ItemGroup>
+
+</Project>

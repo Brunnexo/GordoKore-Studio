@@ -1,0 +1,23 @@
+{
+  "Name": "esconder_jogadores",
+  "Windows": [
+    {
+      "Key": "esconder_jogadores",
+      "Title": { "Pt": "Esconder jogadores", "Es": "Ocultar jugadores", "En": "Hide players" },
+      "Width": 240,
+      "Height": 100,
+      "MenuIcon": "유저인터페이스\\item\\오페라가면.bmp",
+      "MenuLabel": { "Pt": "Esconder jogadores", "Es": "Ocultar jugadores", "En": "Hide players" },
+      "Widgets": [
+        { "Type": "Label", "Id": 1, "Name": "aviso", "X": 10, "Y": 26,
+          "Text": { "Pt": "Só na sua tela: seu personagem fica.", "Es": "Solo en tu pantalla: tu personaje queda.", "En": "Only on your screen: your character stays." } },
+        { "Type": "Button", "Id": 2, "Name": "alternar", "X": 10, "Y": 48, "Width": 220, "Height": 20,
+          "Text": { "Pt": "Esconder / mostrar jogadores", "Es": "Ocultar / mostrar jugadores", "En": "Hide / show players" },
+          "Action": "Lua", "ActionValue": "alternar_jogadores" },
+        { "Type": "Label", "Id": 3, "Name": "estado", "X": 10, "Y": 76, "Bold": true,
+          "Text": { "Pt": "Clique para esconder ou mostrar", "Es": "Clic para ocultar o mostrar", "En": "Click to hide or show" } }
+      ]
+    }
+  ],
+  "Lua": "-- Esconder jogadores: so na sua tela (o servidor e os outros jogadores nao mudam).\n-- Sem codigo, o botao tambem pode usar a acao \"Esconder no mapa\" (jogadores).\nlocal ESTADO = 3\n\nfunction alternar_jogadores()\n  local esconder = not gk.hidden('jogadores')\n  gk.hide('jogadores', esconder)\n  if esconder then\n    gk.set(ESTADO, gk.tr('Jogadores escondidos', 'Jugadores ocultos', 'Players hidden'))\n  else\n    gk.set(ESTADO, gk.tr('Jogadores visíveis', 'Jugadores visibles', 'Players visible'))\n  end\nend\n"
+}

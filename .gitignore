@@ -1,0 +1,16 @@
+bin/
+obj/
+*.user
+.vs/
+
+# Versao de producao (publicar.bat) e pacotes da release
+publish/
+release/
+
+# Anotacoes e configuracao locais do assistente
+CLAUDE.md
+.claude/
+
+# Codigo gerado ao compilar os exemplos (o user.cpp do painel_bot fica: tem codigo do exemplo)
+exemplos/*/*
+!exemplos/painel_bot/user.cpp

@@ -1,0 +1,2 @@
+# O cmd le .bat com LF errado (e os acentos em UTF-8 pioram): sempre CRLF
+*.bat text eol=crlf

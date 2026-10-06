@@ -1,0 +1,71 @@
+name: Release
+
+# Tag vX.Y.Z: verifica, publica o executável autocontido (arquivo único, sem PDB), monta o .zip com os exemplos e
+# o manual e cria a release com as notas da versão no CHANGELOG.md.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Versão da tag
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart('v')
+          "VERSION=$version" >> $env:GITHUB_ENV
+
+      - name: Verificação
+        shell: pwsh
+        run: |
+          dotnet build GordoKore.Studio.sln -c Release -p:Version=$env:VERSION
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & src/GordoKore.Studio/bin/Release/net10.0-windows/GordoKore.Studio.exe --check | Out-Host
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Publicar
+        shell: pwsh
+        run: |
+          dotnet publish src/GordoKore.Studio/GordoKore.Studio.csproj -c Release -r win-x64 --self-contained true -o publish `
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true `
+            -p:DebugType=none -p:DebugSymbols=false -p:SatelliteResourceLanguages=pt-BR -p:Version=$env:VERSION
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Pacote
+        shell: pwsh
+        run: |
+          $name = "GordoKore-Studio-v$env:VERSION-win-x64"
+          $dir = "release/$name"
+          New-Item -ItemType Directory -Force "$dir/exemplos/painel_bot" | Out-Null
+          Copy-Item publish/GordoKore.Studio.exe $dir
+          Copy-Item exemplos/*.gkproj, exemplos/README.md "$dir/exemplos"
+          Copy-Item exemplos/painel_bot/user.cpp "$dir/exemplos/painel_bot"
+          Copy-Item docs $dir -Recurse
+          Copy-Item README.md, LICENSE, CHANGELOG.md $dir
+          Compress-Archive -Path "$dir/*" -DestinationPath "release/$name.zip"
+          "ZIP=release/$name.zip" >> $env:GITHUB_ENV
+
+      - name: Notas da versão
+        shell: pwsh
+        run: |
+          $text = Get-Content CHANGELOG.md -Raw -Encoding utf8
+          $section = [regex]::Match($text, "(?ms)^## \[$([regex]::Escape($env:VERSION))\][^\n]*\n(.*?)(?=^## |\z)")
+          $notes = "GordoKore Studio $env:VERSION"
+          if ($section.Success) { $notes = $section.Groups[1].Value.Trim() }
+          $notes | Out-File notes.md -Encoding utf8
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: GordoKore Studio ${{ github.ref_name }}
+          body_path: notes.md
+          files: ${{ env.ZIP }}

@@ -1,0 +1,37 @@
+{
+  "Name": "commits_openkore",
+  "Windows": [
+    {
+      "Key": "commits_openkore",
+      "Title": { "Pt": "Commits do OpenKore", "Es": "Commits de OpenKore", "En": "OpenKore commits" },
+      "Width": 380,
+      "Height": 268,
+      "MenuIcon": "유저인터페이스\\item\\북.bmp",
+      "MenuLabel": { "Pt": "Commits do OpenKore", "Es": "Commits de OpenKore", "En": "OpenKore commits" },
+      "OnOpen": "ao_abrir",
+      "Widgets": [
+        { "Type": "Label", "Id": 1, "Name": "estado", "X": 10, "Y": 25, "Width": 270, "Bold": true, "Fit": true,
+          "Text": { "Pt": "Commits recentes (API do GitHub)", "Es": "Commits recientes (API de GitHub)", "En": "Recent commits (GitHub API)" } },
+        { "Type": "Button", "Id": 2, "Name": "atualizar", "X": 290, "Y": 22, "Width": 80, "Height": 20,
+          "Text": { "Pt": "Atualizar", "Es": "Actualizar", "En": "Refresh" },
+          "Action": "Lua", "ActionValue": "buscar" },
+        { "Type": "DataList", "Id": 3, "Name": "commits", "X": 0, "Y": 46, "Width": 380, "Height": 160, "RowHeight": 20,
+          "Source": "Code", "FilterField": "busca", "FilterColumns": "autor;mensagem",
+          "Action": "Lua", "ActionValue": "mostrar" },
+        { "Type": "Label", "Id": 4, "Name": "data", "Parent": 3, "X": 6, "Y": 3, "Width": 72,
+          "Text": { "Pt": "{data}", "Es": "{data}", "En": "{data}" } },
+        { "Type": "Label", "Id": 5, "Name": "autor", "Parent": 3, "X": 82, "Y": 3, "Width": 80, "Fit": true, "Bold": true,
+          "Text": { "Pt": "{autor}", "Es": "{autor}", "En": "{autor}" } },
+        { "Type": "Label", "Id": 6, "Name": "mensagem", "Parent": 3, "X": 166, "Y": 3, "Width": 194, "Fit": true,
+          "Text": { "Pt": "{mensagem}", "Es": "{mensagem}", "En": "{mensagem}" } },
+        { "Type": "Edit", "Id": 7, "Name": "busca", "X": 10, "Y": 214, "Width": 170, "Height": 18, "MaxChars": 32,
+          "Text": { "Pt": "Buscar autor ou mensagem", "Es": "Buscar autor o mensaje", "En": "Search author or message" } },
+        { "Type": "Label", "Id": 8, "Name": "total", "X": 190, "Y": 216,
+          "Text": { "Pt": "{commits.total} commits", "Es": "{commits.total} commits", "En": "{commits.total} commits" } },
+        { "Type": "Label", "Id": 9, "Name": "detalhe", "X": 10, "Y": 242, "Width": 360, "Fit": true,
+          "Text": { "Pt": "Clique num commit para ver aqui.", "Es": "Clic en un commit para verlo aqui.", "En": "Click a commit to see it here." } }
+      ]
+    }
+  ],
+  "Lua": "-- Commits recentes do OpenKore pela API publica do GitHub (sem chave, ate 60 consultas por hora).\n-- Ao abrir mostra o que ja buscou nos ultimos 5 minutos; o botao Atualizar busca de novo.\nlocal ESTADO, LISTA, DETALHE = 1, 3, 9\nlocal URL = 'https://api.github.com/repos/OpenKore/openkore/commits?per_page=30'\nlocal COLUNAS = { 'data', 'autor', 'mensagem' }\n\nlocal linhas = nil   -- ultimo resultado: sobrevive a janela fechar\nlocal fresco = false -- buscado ha menos de 5 minutos\n\nlocal function mostrar_linhas()\n  gk.rows(LISTA, COLUNAS, linhas)\n  gk.set(ESTADO, #linhas .. gk.tr(' commits recentes', ' commits recientes', ' recent commits'))\nend\n\n-- A resposta de erro do GitHub tambem é JSON: {\"message\": \"...\"}\nlocal function motivo(corpo)\n  local erro = gk.json(corpo)\n  return type(erro) == 'table' and erro.message or corpo:sub(1, 80)\nend\n\nfunction buscar()\n  gk.set(ESTADO, gk.tr('Buscando no GitHub...', 'Buscando en GitHub...', 'Fetching from GitHub...'))\n  gk.http_get(URL, function(ok, corpo, status)\n    if not ok then\n      gk.set(ESTADO, 'Erro ' .. status .. ': ' .. motivo(corpo))\n      return\n    end\n    local commits, erro = gk.json(corpo)\n    if type(commits) ~= 'table' then\n      gk.set(ESTADO, 'JSON invalido: ' .. tostring(erro))\n      return\n    end\n    linhas = {}\n    for i, c in ipairs(commits) do\n      local autor = c.commit.author\n      local primeira = c.commit.message:match('^[^\\n]*') or ''\n      linhas[i] = { autor.date:sub(1, 10), autor.name, primeira }\n    end\n    fresco = true\n    gk.after(5 * 60 * 1000, function() fresco = false end)\n    mostrar_linhas()\n  end)\nend\n\nfunction ao_abrir()\n  if linhas and fresco then\n    mostrar_linhas()\n  else\n    buscar()\n  end\nend\n\nfunction mostrar(id, evento, linha)\n  gk.set(DETALHE, gk.value(LISTA, linha, 'data') .. ' ' .. gk.value(LISTA, linha, 'autor') .. ': ' .. gk.value(LISTA, linha, 'mensagem'))\nend\n"
+}

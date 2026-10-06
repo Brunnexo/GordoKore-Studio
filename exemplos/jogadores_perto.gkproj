@@ -1,0 +1,32 @@
+{
+  "Name": "jogadores_perto",
+  "Windows": [
+    {
+      "Key": "jogadores_perto",
+      "Title": { "Pt": "Jogadores por perto", "Es": "Jugadores cercanos", "En": "Nearby players" },
+      "Width": 260,
+      "Height": 240,
+      "MenuIcon": "유저인터페이스\\item\\호크아이.bmp",
+      "MenuLabel": { "Pt": "Jogadores por perto", "Es": "Jugadores cercanos", "En": "Nearby players" },
+      "OnOpen": "ao_abrir",
+      "Widgets": [
+        { "Type": "Label", "Id": 1, "Name": "mapa", "X": 10, "Y": 24, "Bold": true,
+          "Text": { "Pt": "Mapa: ...", "Es": "Mapa: ...", "En": "Map: ..." } },
+        { "Type": "DataList", "Id": 2, "Name": "perto", "X": 0, "Y": 44, "Width": 260, "Height": 160, "RowHeight": 20,
+          "Source": "MapPlayers", "FilterField": "busca", "FilterColumns": "nome;classe_nome",
+          "Action": "Lua", "ActionValue": "clicou" },
+        { "Type": "Label", "Id": 4, "Name": "nome", "Parent": 2, "X": 6, "Y": 3, "Width": 120, "Fit": true,
+          "Text": { "Pt": "{nome}", "Es": "{nome}", "En": "{nome}" } },
+        { "Type": "Label", "Id": 5, "Name": "classe", "Parent": 2, "X": 130, "Y": 3, "Width": 80, "Fit": true,
+          "Text": { "Pt": "{classe_nome}", "Es": "{classe_nome}", "En": "{classe_nome}" } },
+        { "Type": "Label", "Id": 6, "Name": "distancia", "Parent": 2, "X": 200, "Y": 3, "Width": 40, "AlignRight": true,
+          "Text": { "Pt": "{distancia}", "Es": "{distancia}", "En": "{distancia}" } },
+        { "Type": "Edit", "Id": 3, "Name": "busca", "X": 10, "Y": 212, "Width": 140, "Height": 18, "MaxChars": 24,
+          "Text": { "Pt": "Buscar nome ou classe", "Es": "Buscar nombre o clase", "En": "Search name or class" } },
+        { "Type": "Label", "Id": 7, "Name": "total", "X": 160, "Y": 214,
+          "Text": { "Pt": "{perto.total} jogadores", "Es": "{perto.total} jugadores", "En": "{perto.total} players" } }
+      ]
+    }
+  ],
+  "Lua": "-- Jogadores por perto: a lista se atualiza sozinha (fonte \"Jogadores no mapa\").\n-- A janela chama ao_abrir quando abre (propriedade \"Ao abrir\"); o timer atualiza o mapa a cada 2 s.\nlocal MAPA, LISTA = 1, 2\n\nfunction ao_abrir()\n  local eu = gk.me()\n  if eu then\n    gk.set(MAPA, gk.tr('Mapa: ', 'Mapa: ', 'Map: ') .. eu.mapa .. ' (' .. eu.x .. ', ' .. eu.y .. ')')\n  end\nend\n\n-- Clique na linha: onde o jogador esta agora\nfunction clicou(id, evento, linha)\n  local alvo = gk.actor(tonumber(gk.value(LISTA, linha, 'id')))\n  if alvo then\n    gk.log(alvo.nome .. ' em ' .. alvo.x .. ', ' .. alvo.y .. ' (' .. alvo.distancia .. ' celulas)')\n  end\nend\n\ngk.every(2000, ao_abrir)\n"
+}
