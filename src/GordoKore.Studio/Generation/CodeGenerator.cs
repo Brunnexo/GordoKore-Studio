@@ -15,6 +15,9 @@ public static class CodeGenerator
 {
     public const int IconSize = 43;
 
+    // GK_SDK_VERSION do CMakeLists.txt do Kore-Bridge (o header nao define): o modulo exige host com essa versao
+    public const int SdkVersion = 6;
+
     private static readonly Encoding Cp1252 = Encoding.GetEncoding(1252);
 
     public static void Generate(Project project, string outDir, Func<string, Bitmap?> loadImage)
@@ -99,6 +102,7 @@ public static class CodeGenerator
 
         set(CMAKE_CXX_STANDARD 17)
         add_library({{name}} SHARED module.gen.cpp user.cpp)
+        target_compile_definitions({{name}} PRIVATE GK_SDK_VERSION={{SdkVersion}})
         set_target_properties({{name}} PROPERTIES PREFIX "")
 
         if(MINGW)

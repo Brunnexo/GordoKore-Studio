@@ -44,6 +44,8 @@ internal static class Checks
             Expect(source.Contains("GK_ACTION_LUA, \"contar\""), "acao Lua");
             Expect(source.Contains("{\"Op\\xE7\\xE3o\", nullptr, \"Option\"}"), "texto em CP1252");
             Expect(source.Contains("kIcon0[]"), "icone do menu");
+            Expect(File.ReadAllText(Path.Combine(dir, "CMakeLists.txt")).Contains($"GK_SDK_VERSION={CodeGenerator.SdkVersion}")
+                && !CodeGenerator.SdkHeader().Contains("#define GK_SDK_VERSION"), "versao do SDK no CMakeLists.txt, fora do header");
             int area = source.IndexOf("g_host->add_scroll_area(win, 11, 10, 200, 160, 60);", StringComparison.Ordinal);
             int child = source.IndexOf("g_host->add_label(win, 12, 4, 200,", StringComparison.Ordinal);
             int parent = source.IndexOf("g_host->set_parent(win, 12, 11);", StringComparison.Ordinal);

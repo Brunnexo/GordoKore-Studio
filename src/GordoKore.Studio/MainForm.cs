@@ -146,7 +146,7 @@ public sealed class MainForm : Form
         ((ToolStripMenuItem)help.DropDownItems.Add("&Como usar", null, (_, _) => MessageBox.Show(this, HelpText, "Como usar"))).ShortcutKeys = Keys.F1;
         help.DropDownItems.Add("Página do &projeto", null, (_, _) => Shell(RepositoryUrl));
         help.DropDownItems.Add("&Sobre", null, (_, _) => MessageBox.Show(this,
-            $"GordoKore Studio {Application.ProductVersion.Split('+')[0]}\n\nMonta janelas para os módulos do GordoKore.\n\nLicença MIT.\n{RepositoryUrl}",
+            $"GordoKore Studio {Application.ProductVersion.Split('+')[0]}\nSDK {CodeGenerator.SdkVersion} (os módulos exigem o GordoKore com SDK {CodeGenerator.SdkVersion} ou mais novo)\n\nMonta janelas para os módulos do GordoKore.\n\nLicença MIT.\n{RepositoryUrl}",
             "Sobre"));
 
         menu.Items.AddRange(new ToolStripItem[] { file, edit, window, module, settings, help });

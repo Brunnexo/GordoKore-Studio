@@ -18,7 +18,10 @@
 
 #include <stddef.h>
 
-#define GK_SDK_VERSION 6
+/* Versao do SDK vem do build: o CMakeLists.txt do Kore-Bridge e o do modulo definem GK_SDK_VERSION */
+#ifndef GK_SDK_VERSION
+#error "Defina GK_SDK_VERSION no build: add_compile_definitions(GK_SDK_VERSION=<versao do host>)"
+#endif
 
 #ifdef __cplusplus
 #define GK_EXTERN_C extern "C"
