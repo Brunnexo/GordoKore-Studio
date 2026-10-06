@@ -146,6 +146,9 @@ Quer contribuir? Veja o [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 Projeto independente e não oficial, sem vínculo com a Gravity. "Ragnarok Online" e as texturas exibidas na prévia pertencem aos seus donos. O estúdio só lê a GRF da sua instalação do jogo e não distribui nenhum arquivo dela. Modificações e automação podem ir contra os termos de uso do jogo: use por sua conta e risco.
 
+## Obrigado
+- [sherolyner](https://github.com/sherolyner) - pelos ícones do menu e pelo pixelart do meu avatar!
+
 ## Licença
 
 [MIT](LICENSE) © 2026 Bruno Costa
