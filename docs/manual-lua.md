@@ -213,10 +213,17 @@ Todas as funções ficam na tabela `gk`. O `id` é sempre o Id do widget no est�
 
 | Função | O que faz |
 |---|---|
-| `gk.hide('jogadores', esconder)` | Esconde (`true`) ou mostra (`false`) os outros jogadores do mapa. Só na sua tela: o servidor e os outros jogadores não mudam, e o seu personagem fica. Vale em todos os mapas até o jogo fechar, mesmo com a janela fechada. |
-| `gk.hidden('jogadores')` | `true` se os jogadores estão escondidos agora. |
+| `gk.hide(parte, esconder)` | Esconde (`true`) ou mostra (`false`) uma parte do mapa. Só na sua tela: o servidor e os outros jogadores não mudam, e o seu personagem fica. Vale em todos os mapas até o jogo fechar, mesmo com a janela fechada. |
+| `gk.hidden(parte)` | `true` se a parte está escondida agora. |
 
-Por enquanto a única parte do mapa é `'jogadores'`; outro nome dá erro (`invalid option`). Sem código, a ação **Esconder no mapa** faz o mesmo: no botão ela alterna (esconde/mostra) e no liga/desliga marcado ela esconde.
+As partes são:
+
+- `'jogadores'`: os outros jogadores;
+- `'efeitos'`: os efeitos presos aos outros jogadores (skills, buffs, auras). Os seus continuam. Precisa do GordoKore com SDK 7.
+
+Uma parte de cada vez no Lua; para esconder as duas, chame `gk.hide` duas vezes. Outro nome dá erro (`invalid option`).
+
+Sem código, a ação **Esconder no mapa** faz o mesmo: no botão ela alterna (esconde/mostra) e no liga/desliga marcado ela esconde. Nela, `jogadores,efeitos` vale pelas duas partes.
 
 ### Quem está no mapa
 
@@ -690,6 +697,29 @@ end
 
 `not gk.hidden(...)` inverte o estado atual: escondidos passam a visíveis e vice-versa. O estado fica guardado no jogo, não na janela; por isso a função pergunta com `gk.hidden` em vez de guardar uma variável própria.
 
+### Esconder os jogadores e os efeitos deles
+
+**Widgets:** dois liga/desliga com a ação **Esconder no mapa**, um com `jogadores` (Id 2) e outro com `efeitos` (Id 3), e um Botão "Esconder / mostrar tudo" com a ação Lua `alternar_tudo`. A janela chama `ao_abrir` na propriedade **Ao abrir**. É o exemplo `exemplos/esconder_jogadores_e_efeitos.gkproj`.
+
+```lua
+local JOGADORES, EFEITOS = 2, 3
+
+-- O escondido vale até fechar o jogo, mesmo com a janela fechada: ao abrir, os liga/desliga mostram o estado real
+function ao_abrir()
+  gk.check(JOGADORES, gk.hidden('jogadores'))
+  gk.check(EFEITOS, gk.hidden('efeitos'))
+end
+
+function alternar_tudo()
+  local esconder = not (gk.hidden('jogadores') and gk.hidden('efeitos'))
+  gk.hide('jogadores', esconder)
+  gk.hide('efeitos', esconder)
+  ao_abrir()
+end
+```
+
+Os liga/desliga não precisam de código: a ação esconde quando eles ficam marcados. O `gk.check` só acerta a marca, sem disparar a ação de novo.
+
 ### Quem está por perto (lista ao vivo)
 
 **Widgets:**
@@ -940,7 +970,7 @@ end
 | lista de dados | `gk.rows`, `gk.source`, `gk.count`, `gk.value` |
 | esconder | `gk.visible(id, bool)` |
 | janelas | `gk.open(chave)`, `gk.close([chave])`, `gk.toggle([chave])` |
-| esconder os outros jogadores | `gk.hide('jogadores', bool)`, `gk.hidden('jogadores')` |
+| esconder os outros jogadores e os efeitos deles | `gk.hide('jogadores' ou 'efeitos', bool)`, `gk.hidden(parte)` |
 | quem está no mapa | `gk.me()`, `gk.players([raio])`, `gk.npcs([raio])`, `gk.monsters([raio])`, `gk.actor(id)`, `gk.map()` |
 | repetir ou esperar | `gk.every(ms, f)`, `gk.after(ms, f)`, `gk.cancel(t)` |
 | buscar numa API | `gk.http_get(url, function(ok, corpo, status) end)`, `gk.json(texto)` |

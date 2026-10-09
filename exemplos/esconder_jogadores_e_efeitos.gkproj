@@ -1,0 +1,28 @@
+{
+  "Name": "esconder_jogadores_e_efeitos",
+  "Windows": [
+    {
+      "Key": "esconder_jogadores_e_efeitos",
+      "Title": { "Pt": "Jogadores e efeitos", "Es": "Jugadores y efectos", "En": "Players and effects" },
+      "Width": 250,
+      "Height": 126,
+      "MenuIcon": "유저인터페이스\\item\\선글래스.bmp",
+      "MenuLabel": { "Pt": "Esconder jogadores e efeitos", "Es": "Ocultar jugadores y efectos", "En": "Hide players and effects" },
+      "OnOpen": "ao_abrir",
+      "Widgets": [
+        { "Type": "Label", "Id": 1, "Name": "aviso", "X": 10, "Y": 24,
+          "Text": { "Pt": "Só na sua tela: o seu personagem fica.", "Es": "Solo en tu pantalla: tu personaje queda.", "En": "Only on your screen: your character stays." } },
+        { "Type": "Label", "Id": 5, "Name": "rotuloJogadores", "X": 10, "Y": 48,
+          "Text": { "Pt": "Outros jogadores", "Es": "Otros jugadores", "En": "Other players" } },
+        { "Type": "CheckBox", "Id": 2, "Name": "jogadores", "X": 206, "Y": 47, "Action": "Hide", "ActionValue": "jogadores" },
+        { "Type": "Label", "Id": 6, "Name": "rotuloEfeitos", "X": 10, "Y": 70,
+          "Text": { "Pt": "Efeitos deles (skills, buffs, auras)", "Es": "Sus efectos (habilidades, buffs, auras)", "En": "Their effects (skills, buffs, auras)" } },
+        { "Type": "CheckBox", "Id": 3, "Name": "efeitos", "X": 206, "Y": 69, "Action": "Hide", "ActionValue": "efeitos" },
+        { "Type": "Button", "Id": 4, "Name": "tudo", "X": 10, "Y": 96, "Width": 230, "Height": 20,
+          "Text": { "Pt": "Esconder / mostrar tudo", "Es": "Ocultar / mostrar todo", "En": "Hide / show all" },
+          "Action": "Lua", "ActionValue": "alternar_tudo" }
+      ]
+    }
+  ],
+  "Lua": "-- Esconder jogadores e efeitos: so na sua tela (o servidor e os outros jogadores nao mudam).\n-- Os liga/desliga usam a acao \"Esconder no mapa\" (jogadores; efeitos), sem codigo. O Lua so acerta\n-- o estado deles ao abrir e faz o botao que esconde ou mostra os dois de uma vez.\nlocal JOGADORES, EFEITOS = 2, 3\n\n-- O escondido vale ate fechar o jogo, mesmo com a janela fechada: ao abrir, os liga/desliga mostram o estado real\nfunction ao_abrir()\n  gk.check(JOGADORES, gk.hidden('jogadores'))\n  gk.check(EFEITOS, gk.hidden('efeitos'))\nend\n\nfunction alternar_tudo()\n  local esconder = not (gk.hidden('jogadores') and gk.hidden('efeitos'))\n  gk.hide('jogadores', esconder)\n  gk.hide('efeitos', esconder)\n  ao_abrir()\nend\n"
+}

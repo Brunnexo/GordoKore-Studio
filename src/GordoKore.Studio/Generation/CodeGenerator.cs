@@ -16,7 +16,7 @@ public static class CodeGenerator
     public const int IconSize = 43;
 
     // GK_SDK_VERSION do CMakeLists.txt do Kore-Bridge (o header nao define): o modulo exige host com essa versao
-    public const int SdkVersion = 6;
+    public const int SdkVersion = 7;
 
     private static readonly Encoding Cp1252 = Encoding.GetEncoding(1252);
 
@@ -299,7 +299,7 @@ public static class CodeGenerator
                 foreach (var (kind, value) in new[] { (widget.Action, widget.ActionValue), (widget.RightAction, widget.RightValue), (widget.DoubleAction, widget.DoubleValue) })
                     if (kind == ActionKind.ClearField && window.Find(value.Trim()) is not { Type: WidgetType.Edit })
                         problems.Add($"{at}: {widget.Type} {widget.Id} limpa o campo \"{value}\", que não é um campo de texto da janela.");
-                    else if (kind == ActionKind.Hide && value.Trim() != "" && !WorldParts.Contains(value.Trim()))
+                    else if (kind == ActionKind.Hide && value.Trim() != "" && value.Split(',').Any(part => !WorldParts.Contains(part.Trim())))
                         problems.Add($"{at}: {widget.Type} {widget.Id} esconde \"{value}\"; o que dá para esconder: {string.Join(", ", WorldParts)}.");
             if (window.OnOpen.Trim() != "" && project.Lua.Trim() == "")
                 problems.Add($"{at}: chama \"{window.OnOpen.Trim()}\" ao abrir, mas o Script Lua está vazio.");
@@ -307,8 +307,9 @@ public static class CodeGenerator
         return problems;
     }
 
-    /// <summary>Partes do mapa da acao "Esconder no mapa" (GkWorldPart do host, na mesma ordem); vazio = a primeira.</summary>
-    public static readonly string[] WorldParts = { "jogadores" };
+    /// <summary>Partes do mapa da acao "Esconder no mapa" (GkWorldPart do host, na mesma ordem); vazio = a primeira; varias
+    /// separadas por virgula.</summary>
+    public static readonly string[] WorldParts = { "jogadores", "efeitos" };
 
     /// <summary>Widget que é celula (modelo da linha) de uma lista de dados.</summary>
     public static bool IsCell(WindowModel window, Widget widget) =>

@@ -47,7 +47,7 @@ flowchart LR
   - de uma lista fixa;
   - do seu script.
 - **Janela redimensionável** com âncoras e **modelos prontos** (barra de busca, rodapé, janela de itens do jogo).
-- **Ações sem código**: comando do OpenKore, arrastar item, descrição e drops do item, esconder os outros jogadores, limpar campo.
+- **Ações sem código**: comando do OpenKore, arrastar item, descrição e drops do item, esconder os outros jogadores e os efeitos deles, limpar campo.
 - **Lua** para dar comportamento às janelas: dados do mapa, timers e internet (buscar numa API e ler JSON).
 - **C++** para quem quer ir além, com o SDK do GordoKore.
 - Textos em **português, espanhol e inglês**: a janela segue o idioma do jogo.
@@ -96,6 +96,7 @@ A pasta [`exemplos/`](exemplos/) tem projetos prontos para abrir, estudar e modi
 | [`itens`](exemplos/itens.gkproj) | A janela "Itens do jogo" refeita só com peças genéricas: busca, lista com ícones, arrastar item, drops. |
 | [`jogadores_perto`](exemplos/jogadores_perto.gkproj) | Lista ao vivo dos jogadores do mapa, com busca e distância. |
 | [`esconder_jogadores`](exemplos/esconder_jogadores.gkproj) | Um botão que esconde os outros jogadores, só na sua tela. |
+| [`esconder_jogadores_e_efeitos`](exemplos/esconder_jogadores_e_efeitos.gkproj) | Liga/desliga para esconder os outros jogadores e os efeitos deles (skills, buffs, auras), só na sua tela. |
 | [`commits_openkore`](exemplos/commits_openkore.gkproj) | Busca dados numa API (GitHub) e mostra numa lista do jogo. |
 
 ## Scripts Lua

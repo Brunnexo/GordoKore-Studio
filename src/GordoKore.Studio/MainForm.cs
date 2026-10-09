@@ -273,7 +273,7 @@ public sealed class MainForm : Form
         "registro (ex.: {nome}, #{id}); \"{lista.total}\" num texto mostra quantos registros ela tem.\n\n" +
         "Janela redimensionável (propriedades da janela): cada widget segue a sua Âncora.\n\n" +
         "Ações: comando do OpenKore, Lua (aba Script Lua), C++ (user.cpp), arrastar/descrição/drops do item da linha, " +
-        "limpar um campo ou esconder os outros jogadores no mapa (só na sua tela).\n\n" +
+        "limpar um campo ou esconder os outros jogadores e os efeitos deles no mapa (só na sua tela; \"jogadores,efeitos\" esconde os dois).\n\n" +
         "Lua: a aba Script Lua guarda as funções; a propriedade \"Ao abrir\" da janela chama uma delas quando ela abre. " +
         "No script há dados do mapa (gk.me, gk.players, gk.npcs, gk.monsters), timers (gk.every) e internet (gk.http_get, gk.json). " +
         "Manual: docs\\manual-lua.md.\n\n" +

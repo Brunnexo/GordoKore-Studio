@@ -2,6 +2,14 @@
 
 As versões seguem o [versionamento semântico](https://semver.org/lang/pt-BR/). A release do GitHub usa como notas a seção da versão correspondente neste arquivo.
 
+## [Não lançado]
+
+### Módulos (precisam do GordoKore com SDK 7)
+
+- A ação *Esconder no mapa* e o `gk.hide` ganham a parte `efeitos`: esconde os efeitos presos aos outros jogadores (skills, buffs, auras), só na sua tela. `jogadores,efeitos` esconde os dois.
+- Exemplo `esconder_jogadores_e_efeitos`.
+- **Ajuda > Sobre** mostra a versão do SDK; o `CMakeLists.txt` gerado passa a versão do SDK ao módulo.
+
 ## [0.1.0] - 2026-10-06
 
 Primeira versão pública.

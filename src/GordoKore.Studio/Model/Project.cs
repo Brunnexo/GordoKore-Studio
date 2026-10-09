@@ -199,7 +199,7 @@ public sealed class Widget
         "Esconder no mapa: só na sua tela; o liga/desliga marcado esconde, os outros alternam (esconde/mostra).")]
     [For(B, IB, C, LB, D)]
     public ActionKind Action { get; set; }
-    [DisplayName("Comando ou função"), Category("Ação"), Description("Comando do OpenKore (ex.: ai manual, talknpc {x} {y}), nome da função Lua, coluna do ID do item (vazio = id), nome do campo a limpar ou o que esconder no mapa (jogadores; vazio = jogadores).")]
+    [DisplayName("Comando ou função"), Category("Ação"), Description("Comando do OpenKore (ex.: ai manual, talknpc {x} {y}), nome da função Lua, coluna do ID do item (vazio = id), nome do campo a limpar ou o que esconder no mapa (jogadores, efeitos dos jogadores ou os dois: jogadores,efeitos; vazio = jogadores).")]
     [For(B, IB, C, LB, D)]
     public string ActionValue { get; set; } = "";
     [DisplayName("Ação (clique direito)"), Category("Ação")]

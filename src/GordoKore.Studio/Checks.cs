@@ -77,6 +77,10 @@ internal static class Checks
                    source.Contains("host->bind(g_windows[2], 6, GK_ACTION_HIDE, \"jogadores\");"), "esconder no mapa (vazio = jogadores)");
             var unknownPart = new Project { Windows = { new WindowModel { Widgets = { new Widget { Type = WidgetType.Button, Id = 1, Action = ActionKind.Hide, ActionValue = "monstros" } } } } };
             Expect(CodeGenerator.Validate(unknownPart).Count == 1, "validacao: parte do mapa desconhecida");
+            unknownPart.Windows[0].Widgets[0].ActionValue = "jogadores, efeitos";
+            Expect(CodeGenerator.Validate(unknownPart).Count == 0, "esconder jogadores e efeitos juntos");
+            unknownPart.Windows[0].Widgets[0].ActionValue = "efeitos,monstros";
+            Expect(CodeGenerator.Validate(unknownPart).Count == 1, "validacao: parte desconhecida na lista");
             Expect(source.Contains("g_host->set_source(win, 7, \"jogadores_no_mapa\");"), "lista ao vivo dos jogadores do mapa");
             Expect(source.Contains("host->bind_event(g_windows[2], 0, GK_EVENT_OPEN, GK_ACTION_LUA, \"contar\");"), "Lua ao abrir a janela");
             var openWithoutLua = new Project { Windows = { new WindowModel { OnOpen = "preencher" } } };
@@ -88,7 +92,13 @@ internal static class Checks
             string examples = up == null ? "" : Path.Combine(up.FullName, "exemplos");
             if (Directory.Exists(examples))
                 foreach (string file in Directory.GetFiles(examples, "*.gkproj"))
-                    Expect(CodeGenerator.Validate(Project.Load(file)).Count == 0, "exemplo valido: " + Path.GetFileName(file));
+                {
+                    var example = Project.Load(file);
+                    Expect(CodeGenerator.Validate(example).Count == 0, "exemplo valido: " + Path.GetFileName(file));
+                    if (store != null)
+                        foreach (var window in example.Windows.Where(w => w.MenuIcon != ""))
+                            Expect(store.Read(ResourceStore.TextureDir + window.MenuIcon) != null, $"icone do menu na GRF: {Path.GetFileName(file)}");
+                }
             Templates.ItemsWindow(items); // aplicar de novo troca a janela inteira
             Expect(items.Widgets.Count == project.Windows[1].Widgets.Count && items.Widgets.Select(w => w.Name).Distinct().Count() == items.Widgets.Count, "modelo aplicado de novo, nomes unicos");
             project.Save(Path.Combine(dir, "itens_modelo.gkproj"));

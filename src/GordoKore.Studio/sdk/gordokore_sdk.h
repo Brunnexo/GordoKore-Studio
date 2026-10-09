@@ -68,14 +68,15 @@ enum GkActionKind
     GK_ACTION_ITEM_INFO = 4,  /* SDK 3: descricao do item do registro (a do clique direito no inventario) */
     GK_ACTION_ITEM_DROPS = 5, /* SDK 3: monstros que dropam o item do registro (Divine Pride) */
     GK_ACTION_CLEAR = 6,      /* SDK 3: apaga o campo de texto; value = id do campo */
-    GK_ACTION_HIDE = 7        /* SDK 4: esconde partes do mapa; value = "jogadores". Liga/desliga: marcado esconde;
-                               * os outros alternam */
+    GK_ACTION_HIDE = 7        /* SDK 4: esconde partes do mapa; value = "jogadores", "efeitos" (SDK 7) ou as duas
+                               * separadas por virgula. Liga/desliga: marcado esconde; os outros alternam */
 };
 
 /* SDK 4: partes do mapa que set_hidden esconde, so na tela do jogador (o servidor e os outros nao mudam) */
 enum GkWorldPart
 {
-    GK_WORLD_PLAYERS = 1 /* os outros jogadores (o seu personagem fica) */
+    GK_WORLD_PLAYERS = 1,       /* os outros jogadores (o seu personagem fica) */
+    GK_WORLD_PLAYER_EFFECTS = 2 /* SDK 7: os efeitos presos aos outros jogadores (skills, buffs, auras; os seus ficam) */
 };
 
 /* SDK 5: atores do mapa atual (actors), somaveis */
@@ -215,7 +216,7 @@ typedef struct GkHost
      *   gk.tr(pt, es, en)  gk.log(s)  gk.open(chave)  gk.close([chave])  gk.toggle(chave)
      * SDK 3 (listas de dados): gk.count(id)  gk.value(id, registro, coluna)  gk.source(id, "itens")
      *   gk.rows(id, {"id", "nome"}, {{1, "um"}, {2, "dois"}})
-     * SDK 4 (mapa): gk.hide("jogadores", bool)  gk.hidden("jogadores")
+     * SDK 4 (mapa): gk.hide("jogadores", bool)  gk.hidden("jogadores"); SDK 7: tambem "efeitos"
      * SDK 5 (mundo): gk.me()  gk.players([raio])  gk.npcs([raio])  gk.monsters([raio])  gk.actor(id)  gk.map()
      *   -> {id, nome, tipo, x, y, classe, classe_nome, distancia}; timers gk.every(ms, f)  gk.after(ms, f)  gk.cancel(t)
      *   (fora de evento, as funcoes de widget agem na primeira janela aberta do modulo)
